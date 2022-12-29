@@ -5,8 +5,8 @@ edition = "2021"
 version = "0.1.0"
 readme = "README.md"
 categories = ["command-line-utilities"]
-homepage = "https://github.com/m1guelpf/plz-cli"
-repository = "https://github.com/m1guelpf/plz-cli"
+homepage = "https://github.com/akramz/plz-cli"
+repository = "https://github.com/akramz/plz-cli"
 authors = ["Miguel Piedrafita <soy@miguelpiedrafita.com>"]
 description = "Generate bash scripts from the command line, using Codex"
 

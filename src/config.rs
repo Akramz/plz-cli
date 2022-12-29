@@ -9,7 +9,7 @@ pub struct Config {
 impl Config {
     pub fn new() -> Self {
         let api_key = env::var("OPENAI_API_KEY").unwrap_or_else(|_| {
-            println!("{}", "This program requires an OpenAI API key to run. Please set the OPENAI_API_KEY environment variable. https://github.com/m1guelpf/plz-cli#usage".red());
+            println!("{}", "This program requires an OpenAI API key to run. Please set the OPENAI_API_KEY environment variable. https://github.com/akramz/plz-cli#usage".red());
             exit(1);
         });
 
