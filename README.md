@@ -1,13 +1,20 @@
 # Copilot, for your terminal
 
-A CLI tool that generates shell scripts from a human readable description.
+A CLI tool that generates shell scripts from a human-readable description.
+
+## Notes
+
+This is a fork of the [original repo](https://github.com/m1guelpf/plz-cli) that changes two things:
+
+- Gets rid of the suggestion to execute whatever is generated.
+- Remove optional library messages to minimize the bot-developer interaction (optimizes for heavy use).
 
 ## Installation
 
 You can install `plz` by running the following command in your terminal.
 
 ```
-curl -fsSL https://raw.githubusercontent.com/m1guelpf/plz-cli/main/install.sh | sh -
+curl -fsSL https://raw.githubusercontent.com/akramz/plz-cli/main/install.sh | sh -
 ```
 
 You may need to close and reopen your terminal after installation. Alternatively, you can download the binary corresponding to your OS from the [latest release](https://github.com/m1guelpf/plz-cli/releases/latest).
@@ -34,7 +41,6 @@ Arguments:
   <PROMPT>  Description of the command to execute
 
 Options:
-  -y, --force    Run the generated program without asking for confirmation
   -h, --help     Print help information
   -V, --version  Print version information
 ```

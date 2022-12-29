@@ -14,7 +14,10 @@ mod config;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
+
+// Initialize the CLI object
 struct Cli {
+
     /// Description of the command to execute
     prompt: Vec<String>,
 
@@ -24,12 +27,20 @@ struct Cli {
 }
 
 fn main() {
+
+    // Create the CLI object
     let cli = Cli::parse();
+
+    // Create the config object
     let config = Config::new();
 
+    // Create the client object
     let client = Client::new();
+
+    // Create the spinner used to inform the user to wait
     let mut spinner = Spinner::new(Spinners::BouncingBar, "Generating your command...".into());
 
+    // Attempt to get the user's OS
     let os_hint = if cfg!(target_os = "macos") {
         " (on macOS)"
     } else if cfg!(target_os = "linux") {
@@ -38,6 +49,7 @@ fn main() {
         ""
     };
 
+    // Prompt OpenAI's text-davinci-03 model and get the response
     let response = client
         .post("https://api.openai.com/v1/completions")
         .json(&json!({
@@ -65,73 +77,22 @@ fn main() {
             std::process::exit(1);
         });
 
+    // Get the code from OpenAI's response
     let code = response.json::<serde_json::Value>().unwrap()["choices"][0]["text"]
         .as_str()
         .unwrap()
         .trim()
         .to_string();
 
+    // Stop the spinner and output the code
     spinner.stop_and_persist(
         "✔".green().to_string().as_str(),
         "Got some code!".green().to_string(),
     );
-
     PrettyPrinter::new()
         .input_from_bytes(code.as_bytes())
         .language("bash")
         .grid(true)
         .print()
         .unwrap();
-
-    let should_run = if cli.force {
-        true
-    } else {
-        Question::new(
-            ">> Run the generated program? [Y/n]"
-                .bright_black()
-                .to_string()
-                .as_str(),
-        )
-        .yes_no()
-        .until_acceptable()
-        .default(Answer::YES)
-        .ask()
-        .expect("Couldn't ask question.")
-            == Answer::YES
-    };
-
-    if should_run {
-        spinner = Spinner::new(Spinners::BouncingBar, "Executing...".into());
-
-        // run command and print output and error
-        let output = Command::new("bash")
-            .arg("-c")
-            .arg(code.as_str())
-            .output()
-            .unwrap_or_else(|_| {
-                spinner.stop_and_persist(
-                    "✖".red().to_string().as_str(),
-                    "Failed to execute the generated program.".red().to_string(),
-                );
-                std::process::exit(1);
-            });
-
-        if !output.status.success() {
-            spinner.stop_and_persist(
-                "✖".red().to_string().as_str(),
-                "The program threw an error.".red().to_string(),
-            );
-            println!("{}", String::from_utf8_lossy(&output.stderr));
-            std::process::exit(1);
-        }
-
-        spinner.stop_and_persist(
-            "✔".green().to_string().as_str(),
-            "Command ran successfully".green().to_string(),
-        );
-
-        println!("{}", String::from_utf8_lossy(&output.stdout));
-
-        config.write_to_history(code.as_str());
-    }
 }
