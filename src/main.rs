@@ -21,9 +21,6 @@ struct Cli {
     /// Description of the command to execute
     prompt: Vec<String>,
 
-    /// Run the generated program without asking for confirmation
-    #[clap(short = 'y', long)]
-    force: bool,
 }
 
 fn main() {
