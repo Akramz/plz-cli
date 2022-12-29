@@ -7,7 +7,6 @@ use config::Config;
 use question::{Answer, Question};
 use reqwest::blocking::Client;
 use serde_json::json;
-use spinners::{Spinner, Spinners};
 use std::process::Command;
 
 mod config;
@@ -33,9 +32,6 @@ fn main() {
 
     // Create the client object
     let client = Client::new();
-
-    // Create the spinner used to inform the user to wait
-    let mut spinner = Spinner::new(Spinners::BouncingBar, "Generating your command...".into());
 
     // Attempt to get the user's OS
     let os_hint = if cfg!(target_os = "macos") {
@@ -63,16 +59,7 @@ fn main() {
         .header("Authorization", format!("Bearer {}", config.api_key))
         .send()
         .unwrap()
-        .error_for_status()
-        .unwrap_or_else(|_| {
-            spinner.stop_and_persist(
-                "✖".red().to_string().as_str(),
-                "Failed to get a response. Have you set the OPENAI_API_KEY variable?"
-                    .red()
-                    .to_string(),
-            );
-            std::process::exit(1);
-        });
+        .error_for_status();
 
     // Get the code from OpenAI's response
     let code = response.json::<serde_json::Value>().unwrap()["choices"][0]["text"]
@@ -81,7 +68,7 @@ fn main() {
         .trim()
         .to_string();
 
-    // Stop the spinner and output the code
+    // Output the code
     PrettyPrinter::new()
         .input_from_bytes(code.as_bytes())
         .language("bash")
