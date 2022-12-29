@@ -59,7 +59,8 @@ fn main() {
         .header("Authorization", format!("Bearer {}", config.api_key))
         .send()
         .unwrap()
-        .error_for_status();
+        .error_for_status()
+        .unwrap_or(std::process::exit(1));
 
     // Get the code from OpenAI's response
     let code = response.json::<serde_json::Value>().unwrap()["choices"][0]["text"]
