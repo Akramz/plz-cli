@@ -82,10 +82,6 @@ fn main() {
         .to_string();
 
     // Stop the spinner and output the code
-    spinner.stop_and_persist(
-        "✔".green().to_string().as_str(),
-        "Got some code!".green().to_string(),
-    );
     PrettyPrinter::new()
         .input_from_bytes(code.as_bytes())
         .language("bash")
